@@ -1,0 +1,144 @@
+{
+  "quiz": [
+    {
+      "id": 1,
+      "question": "What is Flutter primarily used for?",
+      "options": [
+        "Backend Development",
+        "Mobile App Development",
+        "Game Development",
+        "Data Analysis"
+      ],
+      "correctAnswer": "Mobile App Development",
+      "marks": 5,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 2,
+      "question": "Which state management technique is most commonly used in Flutter for managing simple app states?",
+      "options": [
+        "Redux",
+        "Provider",
+        "Bloc",
+        "Hooks"
+      ],
+      "correctAnswer": "Provider",
+      "marks": 5,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 3,
+      "question": "What is the purpose of a FutureBuilder in Flutter?",
+      "options": [
+        "To display animations",
+        "To handle asynchronous data",
+        "To build widgets",
+        "To manage themes"
+      ],
+      "correctAnswer": "To handle asynchronous data",
+      "marks": 5,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 4,
+      "question": "How would you display a list of tasks in Flutter?",
+      "options": [
+        "Use a Container",
+        "Use a ListView",
+        "Use a Column",
+        "Use a Row"
+      ],
+      "correctAnswer": "Use a ListView",
+      "marks": 5,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 5,
+      "question": "Which widget would you use to track scrolling within your task list?",
+      "options": [
+        "Scrollable",
+        "ScrollController",
+        "SingleChildScrollView",
+        "ListView"
+      ],
+      "correctAnswer": "ListView",
+      "marks": 5,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 6,
+      "question": "What is the recommended way to update the status of a task in your app?",
+      "options": [
+        "Directly change the widget tree",
+        "Use state management like Provider or Riverpod",
+        "Refresh the entire app",
+        "Call the backend without updating the UI"
+      ],
+      "correctAnswer": "Use state management like Provider or Riverpod",
+      "marks": 5,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 7,
+      "question": "How can you add task reminders in Flutter?",
+      "options": [
+        "Use a Timer widget",
+        "Use flutter_local_notifications plugin",
+        "Use Firebase only",
+        "Use a StatefulWidget"
+      ],
+      "correctAnswer": "Use flutter_local_notifications plugin",
+      "marks": 10,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 8,
+      "question": "Which plugin would you use to implement in-app purchases in Flutter?",
+      "options": [
+        "firebase_in_app_purchases",
+        "flutter_inapp_purchase",
+        "flutter_payment_plugin",
+        "stripe_integration"
+      ],
+      "correctAnswer": "flutter_inapp_purchase",
+      "marks": 10,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 9,
+      "question": "What does the 'setState' method do in Flutter?",
+      "options": [
+        "Refreshes the entire app",
+        "Updates the UI for specific widgets",
+        "Handles API calls",
+        "Configures routes"
+      ],
+      "correctAnswer": "Updates the UI for specific widgets",
+      "marks": 5,
+      "isSkip": false,
+      "isSelectAns": false
+    },
+    {
+      "id": 10,
+      "question": "Which widget can be used for making a scrollable task list with different sections?",
+      "options": [
+        "ListView",
+        "GridView",
+        "CustomScrollView",
+        "PageView"
+      ],
+      "correctAnswer": "CustomScrollView",
+      "marks": 10,
+      "isSkip": false,
+      "isSelectAns": false
+    }
+  ]
+}

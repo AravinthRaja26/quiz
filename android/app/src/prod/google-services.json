@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "824758261534",
+    "project_id": "nikitchem-42005",
+    "storage_bucket": "nikitchem-42005.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824758261534:android:92039745025b44e0ad1b0f",
+        "android_client_info": {
+          "package_name": "com.nikitchem.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC_je__OJxA4Jc99MGgOX5j4AXfuq76ck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824758261534:android:03daec21cb143f4fad1b0f",
+        "android_client_info": {
+          "package_name": "com.nikits.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC_je__OJxA4Jc99MGgOX5j4AXfuq76ck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
