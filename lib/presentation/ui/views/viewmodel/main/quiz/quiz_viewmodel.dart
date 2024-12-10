@@ -10,6 +10,7 @@ import 'package:nikitchem/data/mixin/event_mixin.dart';
 import 'package:nikitchem/data/models/quiz/quiz_model.dart';
 import 'package:nikitchem/data/storage/local_storage/local.storage.dart';
 import 'package:nikitchem/presentation/ui/custom_widget/app_snack_bar.dart';
+import 'package:nikitchem/presentation/ui/utils/app_dialog.dart';
 import 'package:nikitchem/presentation/ui/views/viewmodel/main/quiz/quiz_viewstate.dart';
 
 import 'local_service.dart';
@@ -181,51 +182,18 @@ class QuizViewModel extends BaseViewModel<QuizViewState>
         totalMark += 1;
       }
     }
-    _showMyDialog(context,mark: totalMark);
+    showMyDialog(context,mark: totalMark,onPressed: () async {
+      await Navigator.of(context).maybePop();
+      for (Quiz quiz in state.quizModel?.quiz ?? <Quiz>[]) {
+        dbService?.saveAnswer(quiz.id ?? 0, select: null);
+      }
+      state.quizModel?.quiz?.clear();
+      localStorage.save('currentPageIndex', 0);
+      AppSnackBar.successSnackBar(context, contentMessage: 'Submit you Answer');
+      init();
+      controller?.jumpTo(0);
+    },totalMark: state.quizModel?.quiz?.length??0 );
 
-  }
-  Future<void> _showMyDialog(BuildContext context,{int? mark}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Result'),
-          content:  SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('You have getting $mark out of ${state.quizModel?.quiz?.length}'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-
-              child: const Text('cancel'),
-              onPressed: () async {
-                await Navigator.of(context).maybePop();
-
-              },
-            ),
-            TextButton(
-
-              child: const Text('Again Start'),
-              onPressed: () async {
-                await Navigator.of(context).maybePop();
-                for (Quiz quiz in state.quizModel?.quiz ?? <Quiz>[]) {
-                  dbService?.saveAnswer(quiz.id ?? 0, select: null);
-                }
-                state.quizModel?.quiz?.clear();
-                localStorage.save('currentPageIndex', 0);
-                AppSnackBar.successSnackBar(context, contentMessage: 'Submit you Answer');
-                init();
-                controller?.jumpTo(0);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
 }
