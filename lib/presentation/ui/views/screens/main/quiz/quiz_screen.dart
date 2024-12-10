@@ -39,71 +39,78 @@ class _QuizBody extends StatelessWidget {
   Widget build(BuildContext context) {
     QuizViewModel viewModel = BaseViewModel.watch<QuizViewModel>(context);
 
-    return viewModel.state.isLoading == true?Center(child: CircularProgressIndicator(),):Column(
-      children: <Widget>[
-        SizedBox(
-          height: MediaQuery.of(context).size.height / 1.5,
-          child: PageView.builder(
-            controller: viewModel.controller,
-            onPageChanged: (int value) {
-              viewModel.pageChange(value);
-            },
-            itemCount: viewModel.state.quizModel?.quiz?.length ?? 0,
-            itemBuilder: (BuildContext context, int index) => Column(
-              children: [
-                const SizedBox(
-                  height: 16,
-                ),
-                Text(
-                  'Question ${index + 1}',
-                  style: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w300,
+    return viewModel.state.isLoading == true
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 1.5,
+                child: PageView.builder(
+                  controller: viewModel.controller,
+                  onPageChanged: (int value) {
+                    viewModel.pageChange(value);
+                  },
+                  itemCount: viewModel.state.quizModel?.quiz?.length ?? 0,
+                  itemBuilder: (BuildContext context, int index) => Column(
+                    children: [
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        'Question ${index + 1}',
+                        style: const TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+
+                      /// questions
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: TextAnimator(
+                          viewModel.state.quizModel?.quiz?[index].question ??
+                              '',
+                          style: const TextStyle(
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 32,
+                      ),
+
+                      /// answers widget
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: WidgetAnimator(
+                          incomingEffect: WidgetTransitionEffects
+                              .incomingSlideInFromBottom(),
+                          child: _Answers(
+                              option: viewModel
+                                  .state.quizModel?.quiz?[index].options,
+                              quiz: viewModel.state.quizModel?.quiz?[index],
+                              index: index),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-
-                /// questions
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: TextAnimator(
-                    viewModel.state.quizModel?.quiz?[index].question ?? '',
-                    style: const TextStyle(
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 32,
-                ),
-
-                /// answers widget
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child:  WidgetAnimator(
-                    incomingEffect: WidgetTransitionEffects.incomingSlideInFromBottom(),
-                    child: _Answers(
-                        option: viewModel.state.quizModel?.quiz?[index].options,
-                        quiz: viewModel.state.quizModel?.quiz?[index],
-                        index : index),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        Align(
-            alignment: Alignment.bottomCenter,
-            child: _PageIndicator(
-              quizModel: viewModel.state.quizModel,
-            )),
-        const SizedBox(
-          height: 32,
-        ),
-        const _PageHandlingButton()
-      ],
-    );
+              ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: _PageIndicator(
+                    quizModel: viewModel.state.quizModel,
+                  )),
+              const SizedBox(
+                height: 32,
+              ),
+              const _PageHandlingButton()
+            ],
+          );
   }
 }
 
@@ -161,7 +168,7 @@ class _Answers extends StatelessWidget {
   final Quiz? quiz;
   final int? index;
 
-  const _Answers({super.key, this.option, this.quiz,this.index});
+  const _Answers({super.key, this.option, this.quiz, this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +188,9 @@ class _Answers extends StatelessWidget {
             onTap: () {
               print('${option?[optionIndex]}');
               viewModel.selectAnswer(
-                  value: option?[optionIndex] ?? '', option: option ?? [],index : index??0);
+                  value: option?[optionIndex] ?? '',
+                  option: option ?? [],
+                  index: index ?? 0);
               // AppSnackBar.warningSnackBar(context,
               //     contentMessage: '${option?[optionIndex]}');
             },
@@ -202,8 +211,7 @@ class _Answers extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 18.0,
                         fontWeight: FontWeight.normal,
-                        color: option?[optionIndex] ==
-                                viewModel.state.currentAnswer
+                        color: option?[optionIndex] == quiz?.selectedAnswer
                             ? CustomColors.white
                             : Colors.black),
                   ),
@@ -223,7 +231,7 @@ class _PageHandlingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     QuizViewModel viewModel = BaseViewModel.watch<QuizViewModel>(context);
-
+    int index = viewModel.state.quizModel?.quiz?.length??0;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
@@ -235,14 +243,20 @@ class _PageHandlingButton extends StatelessWidget {
               },
               child: const Text('Previous')),
           OutlinedButton(
-            onPressed: () {if(viewModel.state.quizModel!.quiz!.length.toInt() - 1 == viewModel.state.currentIndex){
-              AppSnackBar.successSnackBar(context,contentMessage: 'Submit you Answer');
-              viewModel.submitButton();
-            }else{
-              viewModel.nextQuiz(context);}
+            onPressed: () {
+              if (viewModel.state.quizModel!.quiz!.length.toInt() - 1 ==
+                  viewModel.state.currentIndex) {
+
+                viewModel.submitButton(context);
+              } else {
+                viewModel.nextQuiz(context);
+              }
             },
             style: const ButtonStyle(),
-            child: Text(viewModel.state.quizModel!.quiz!.length - 1 == viewModel.state.currentIndex?'Submit': 'Next'),
+            child: Text(index - 1 ==
+                    viewModel.state.currentIndex
+                ? 'Submit'
+                : 'Next'),
           )
         ],
       ),

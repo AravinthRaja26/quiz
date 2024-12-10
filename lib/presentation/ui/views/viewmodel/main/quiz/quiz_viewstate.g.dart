@@ -15,6 +15,8 @@ abstract class _$QuizViewStateCWProxy {
 
   QuizViewState currentAnswer(String? currentAnswer);
 
+  QuizViewState qusId(int? qusId);
+
   QuizViewState selectedAnsewerId(int? selectedAnsewerId);
 
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `QuizViewState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
@@ -28,6 +30,7 @@ abstract class _$QuizViewStateCWProxy {
     QuizModel? quizModel,
     int? currentIndex,
     String? currentAnswer,
+    int? qusId,
     int? selectedAnsewerId,
   });
 }
@@ -53,6 +56,9 @@ class _$QuizViewStateCWProxyImpl implements _$QuizViewStateCWProxy {
       this(currentAnswer: currentAnswer);
 
   @override
+  QuizViewState qusId(int? qusId) => this(qusId: qusId);
+
+  @override
   QuizViewState selectedAnsewerId(int? selectedAnsewerId) =>
       this(selectedAnsewerId: selectedAnsewerId);
 
@@ -69,6 +75,7 @@ class _$QuizViewStateCWProxyImpl implements _$QuizViewStateCWProxy {
     Object? quizModel = const $CopyWithPlaceholder(),
     Object? currentIndex = const $CopyWithPlaceholder(),
     Object? currentAnswer = const $CopyWithPlaceholder(),
+    Object? qusId = const $CopyWithPlaceholder(),
     Object? selectedAnsewerId = const $CopyWithPlaceholder(),
   }) {
     return QuizViewState(
@@ -88,6 +95,10 @@ class _$QuizViewStateCWProxyImpl implements _$QuizViewStateCWProxy {
           ? _value.currentAnswer
           // ignore: cast_nullable_to_non_nullable
           : currentAnswer as String?,
+      qusId: qusId == const $CopyWithPlaceholder()
+          ? _value.qusId
+          // ignore: cast_nullable_to_non_nullable
+          : qusId as int?,
       selectedAnsewerId: selectedAnsewerId == const $CopyWithPlaceholder()
           ? _value.selectedAnsewerId
           // ignore: cast_nullable_to_non_nullable

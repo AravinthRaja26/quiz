@@ -18,50 +18,40 @@ import 'local_service.dart';
 class QuizViewModel extends BaseViewModel<QuizViewState>
     with EventMixin<AppEvent>, WidgetsBindingObserver {
   List<Map<String, dynamic>> _quizData = [];
-LocalStorage localStorage= injector<LocalStorage>();
+  LocalStorage localStorage = injector<LocalStorage>();
+
   ///
   // LocalStoreService localStoreService = LocalStoreService.instance;
-   DatabaseService? dbService;
+  DatabaseService? dbService;
+
   ///
   QuizViewModel() : super(QuizViewState.initial());
 
   ///
-  PageController controller =
-      PageController(viewportFraction: 1, keepPage: false);
+  PageController? controller;
 
   ///
   ///
   ///
   init() {
     WidgetsBinding.instance.addPostFrameCallback((Duration val) async {
+      setState(
+        state.copyWith(
+            isLoading: true,
+            currentIndex: localStorage.retrieveInt('currentPageIndex') ?? 0),
+      );
       dbService = DatabaseService();
-      _loadData();
-      // _quizData = await DatabaseService().getAllQuiz();
-      // if (_quizData.isEmpty) {
-      //   addQuiz  ();
-      // }
+      await _loadData();
+      setState(
+        state.copyWith(
+            isLoading: false,
+            currentIndex: localStorage.retrieveInt('currentPageIndex') ?? 0),
+      );
+      controller = PageController(
+          viewportFraction: 1,
+          keepPage: false,
+          initialPage: localStorage.retrieveInt('currentPageIndex') ?? 0);
     });
-
-  }
-
-  Future<void> _loadProgress() async {
-    for (var i = 0; i < _quizData.length; i++) {
-      if (_quizData[i]['userAnswer'] == null) {
-        // setState(() {
-        //   _currentQuestionIndex = i;
-        // });
-
-        break;
-      } else {
-        if (_quizData[i]['userAnswer'] != null) {
-          if (_quizData[i]['userAnswer'] == _quizData[i]['correctAnswer']) {
-            // setState(() {
-            //   _score = int.parse(_quizData[i]['score'].toString());
-            // });
-          }
-        }
-      }
-    }
   }
 
   ///
@@ -74,53 +64,45 @@ LocalStorage localStorage= injector<LocalStorage>();
     _quizData = await dbService?.getAllQuiz();
 
     QuizModel quizModel = QuizModel();
-    List<String> qq = [];
+    List<String> optionList = [];
     List<Quiz> temp = quizModel.quiz ?? [];
 
     if (_quizData.isNotEmpty) {
-      _quizData.forEach((Map<String, dynamic> element) {
-        List<String> options = (jsonDecode(element['options'].toString()) as List<dynamic>)
-            .map((e) => e.toString())
-            .toList();
+      for (Map<String, dynamic> element in _quizData) {
+        List<String> options =
+            (jsonDecode(element['options'].toString()) as List<dynamic>)
+                .map((e) => e.toString())
+                .toList();
 
-        qq.clear();
-        options.forEach((String option) {
-          qq.add(option);
-        });
+        optionList.clear();
+        for (String option in options) {
+          optionList.add(option);
+        }
 
-        Map<String, dynamic> mutableElement = Map<String, dynamic>.from(element);
+        Map<String, dynamic> mutableElement =
+            Map<String, dynamic>.from(element);
 
-        mutableElement['options'] = qq;
-
+        mutableElement['options'] = optionList;
 
         temp.add(Quiz.fromJson(mutableElement));
-      });
-
+      }
       quizModel.quiz = temp;
-      setState( state.copyWith(quizModel: quizModel));
+      setState(state.copyWith(quizModel: quizModel));
 
-      print('==> First option: ${quizModel.quiz?.first.selectedAnswer}');
       setState(state.copyWith(isLoading: false));
     } else {
       await loadJsonData();
       setState(state.copyWith(isLoading: false));
     }
-
-    controller.jumpTo(localStorage.retrieveInt('currentPageIndex')?.toDouble()??0);
-
-
   }
-
-
 
   ///
   Future<void> loadJsonData() async {
-
     String data = await rootBundle.loadString('assets/quizJson/quizz.json');
     QuizModel quizData = QuizModel.fromJson(jsonDecode(data));
     if (quizData.quiz != null && quizData.quiz?.isNotEmpty == true) {
       for (Quiz quiz in quizData.quiz ?? []) {
-        dbService?.insertQuiz(<String,dynamic>{
+        dbService?.insertQuiz(<String, dynamic>{
           'question': '${quiz.question}',
           'options': json.encode(quiz.options),
           'correctAnswer': '${quiz.correctAnswer}',
@@ -133,19 +115,19 @@ LocalStorage localStorage= injector<LocalStorage>();
     }
   }
 
-
   ///
   void nextQuiz(BuildContext context) {
     QuizModel? tempQuiz = state.quizModel;
-    localStorage.save('currentPageIndex', state.currentIndex);
-    if (tempQuiz?.quiz?[state.currentIndex ?? 0].id ==
-            state.selectedAnsewerId &&
+
+    if (tempQuiz?.quiz?[state.currentIndex ?? 0].selectedAnswer != null &&
         tempQuiz?.quiz?[state.currentIndex!].isSelectedThis == 1) {
-      setState(state.copyWith(currentIndex: controller.page!.toInt() + 1));
-      controller.nextPage(
+      setState(state.copyWith(currentIndex: controller!.page!.toInt() + 1));
+      controller?.nextPage(
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInSine);
-      dbService?.saveAnswer(tempQuiz?.quiz?[state.currentIndex ?? 0].id??0,answer:  state.currentAnswer??'',select: 1);
+      dbService?.saveAnswer(state.selectedAnsewerId ?? 0,
+          answer: state.currentAnswer ?? '', select: 1);
+      localStorage.save('currentPageIndex', state.currentIndex!);
     } else {
       AppSnackBar.warningSnackBar(context,
           contentMessage: 'Should be a select the answer');
@@ -154,8 +136,8 @@ LocalStorage localStorage= injector<LocalStorage>();
 
   ///
   void previousQuiz() {
-    setState(state.copyWith(currentIndex: controller.page!.toInt() - 1));
-    controller.previousPage(
+    setState(state.copyWith(currentIndex: controller!.page!.toInt() - 1));
+    controller?.previousPage(
         duration: const Duration(milliseconds: 400), curve: Curves.easeInSine);
   }
 
@@ -168,7 +150,7 @@ LocalStorage localStorage= injector<LocalStorage>();
 
     for (Quiz quiz in tempQuiz?.quiz ?? <Quiz>[]) {
       if (option == quiz.options) {
-        print('==>object');
+        print('==>object${quiz.id}');
         quiz.selectedAnswer = value;
         quiz.isSelectedThis = 1;
         setState(state.copyWith(selectedAnsewerId: quiz.id));
@@ -178,11 +160,22 @@ LocalStorage localStorage= injector<LocalStorage>();
         currentAnswer: value, quizModel: tempQuiz, currentIndex: index));
   }
 
-  void submitButton() {
-
-    for(Quiz quiz in state.quizModel?.quiz??<Quiz>[]){
-      dbService?.saveAnswer(quiz.id??0,select: null);
+  ///
+  void submitButton(BuildContext context) {
+    QuizModel? tempQuiz = state.quizModel;
+    if (tempQuiz?.quiz?[state.currentIndex ?? 0].selectedAnswer != null &&
+        tempQuiz?.quiz?[state.currentIndex!].isSelectedThis == 1) {
+      for (Quiz quiz in state.quizModel?.quiz ?? <Quiz>[]) {
+        dbService?.saveAnswer(quiz.id ?? 0, select: null);
+      }
+      state.quizModel?.quiz?.clear();
+      localStorage.save('currentPageIndex', 0);
+      AppSnackBar.successSnackBar(context, contentMessage: 'Submit you Answer');
+      init();
+      controller?.jumpTo(0);
+    } else {
+      AppSnackBar.warningSnackBar(context,
+          contentMessage: 'Should be a select the answer');
     }
-    controller.jumpTo(0);
   }
 }

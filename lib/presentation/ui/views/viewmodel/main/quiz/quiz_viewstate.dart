@@ -11,6 +11,7 @@ class QuizViewState extends ViewState {
   final bool? isLoading;
 ///
   final int? currentIndex;
+  final int? qusId;
   ///
   final String? currentAnswer;
   ///
@@ -25,6 +26,7 @@ class QuizViewState extends ViewState {
       required this.quizModel,
       required this.currentIndex,
       required this.currentAnswer,
+      required this.qusId,
       required this.selectedAnsewerId});
 
   ///
@@ -34,6 +36,7 @@ class QuizViewState extends ViewState {
       : isLoading = false,
         quizModel = QuizModel(),
         currentIndex = 0,
+        qusId = 0,
         currentAnswer = '',
         selectedAnsewerId = 0;
 
@@ -44,7 +47,7 @@ class QuizViewState extends ViewState {
   List<Object?> get props => <Object?>[
         isLoading,
         quizModel,
-        currentIndex,
+        currentIndex,qusId,
         currentAnswer,
         selectedAnsewerId
       ];
