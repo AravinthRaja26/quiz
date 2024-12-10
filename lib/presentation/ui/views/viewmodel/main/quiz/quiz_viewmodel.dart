@@ -165,17 +165,67 @@ class QuizViewModel extends BaseViewModel<QuizViewState>
     QuizModel? tempQuiz = state.quizModel;
     if (tempQuiz?.quiz?[state.currentIndex ?? 0].selectedAnswer != null &&
         tempQuiz?.quiz?[state.currentIndex!].isSelectedThis == 1) {
-      for (Quiz quiz in state.quizModel?.quiz ?? <Quiz>[]) {
-        dbService?.saveAnswer(quiz.id ?? 0, select: null);
-      }
-      state.quizModel?.quiz?.clear();
-      localStorage.save('currentPageIndex', 0);
-      AppSnackBar.successSnackBar(context, contentMessage: 'Submit you Answer');
-      init();
-      controller?.jumpTo(0);
+      collectTheAnswer(context);
     } else {
       AppSnackBar.warningSnackBar(context,
           contentMessage: 'Should be a select the answer');
     }
   }
+
+
+  ///
+ void collectTheAnswer(BuildContext context){
+    int totalMark = 0;
+    for(Quiz quiz in state.quizModel?.quiz??[]){
+      if(quiz.selectedAnswer !=null && quiz.correctAnswer !=null &&quiz.selectedAnswer == quiz.correctAnswer){
+        totalMark += 1;
+      }
+    }
+    _showMyDialog(context,mark: totalMark);
+
+  }
+  Future<void> _showMyDialog(BuildContext context,{int? mark}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Result'),
+          content:  SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('You have getting $mark out of ${state.quizModel?.quiz?.length}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+
+              child: const Text('cancel'),
+              onPressed: () async {
+                await Navigator.of(context).maybePop();
+
+              },
+            ),
+            TextButton(
+
+              child: const Text('Again Start'),
+              onPressed: () async {
+                await Navigator.of(context).maybePop();
+                for (Quiz quiz in state.quizModel?.quiz ?? <Quiz>[]) {
+                  dbService?.saveAnswer(quiz.id ?? 0, select: null);
+                }
+                state.quizModel?.quiz?.clear();
+                localStorage.save('currentPageIndex', 0);
+                AppSnackBar.successSnackBar(context, contentMessage: 'Submit you Answer');
+                init();
+                controller?.jumpTo(0);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
